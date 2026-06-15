@@ -13,3 +13,6 @@
 <img width="1562" height="979" alt="image" src="https://github.com/user-attachments/assets/5eb09e40-16b7-449e-a646-eb38389616ff" />
 <img width="888" height="753" alt="image" src="https://github.com/user-attachments/assets/7eccc4f7-fa9d-4f50-8246-44fef4aab02a" />
 <img width="826" height="979" alt="image" src="https://github.com/user-attachments/assets/d67cde22-f1a0-4d0e-b232-847c894129c2" />
+
+###### Resource group
+<img width="1910" height="561" alt="image" src="https://github.com/user-attachments/assets/96220827-c720-4585-867a-a821b33a6d92" />
