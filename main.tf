@@ -125,3 +125,14 @@ resource "azurerm_network_interface_security_group_association" "nic_nsg" {
 }
 
 
+
+data "cloudinit_config" "config" {
+  gzip          = false
+  base64_encode = false
+
+  part {
+    filename     = "init.sh"
+    content_type = "text/x-shellscript"
+    content      = file("${path.module}/init.sh")
+  }
+}
