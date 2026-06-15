@@ -27,7 +27,7 @@ provider "cloudinit" {
 
 
 variable "labelPrefix" {
-  description = "yang0371"
+  description = "College username. This will form the beginning of resource names."
   type        = string
 }
 
@@ -135,4 +135,51 @@ data "cloudinit_config" "config" {
     content_type = "text/x-shellscript"
     content      = file("${path.module}/init.sh")
   }
+}
+
+
+
+
+
+resource "azurerm_linux_virtual_machine" "vm" {
+  name                = "${var.labelPrefix}-A05-vm"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  size                = "Standard_B1s"
+
+  admin_username = var.admin_username
+
+  network_interface_ids = [
+    azurerm_network_interface.nic.id
+  ]
+
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = file(pathexpand("~/.ssh/id_rsa.pub"))
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-jammy"
+    sku       = "22_04-lts"
+    version   = "latest"
+  }
+
+  custom_data = base64encode(data.cloudinit_config.config.rendered)
+}
+
+
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
+output "public_ip_address" {
+  value = azurerm_public_ip.public_ip.ip_address
 }
