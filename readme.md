@@ -19,3 +19,26 @@
 
 ###### Resource group
 <img width="1910" height="561" alt="image" src="https://github.com/user-attachments/assets/96220827-c720-4585-867a-a821b33a6d92" />
+
+
+
+##### Error 1: VM Creation Problem
+I met problem with create VM,  after investigation, I found it is due to the subcription. 
+Error Message
+SkuNotAvailable:
+The requested VM size (Standard_B1s, Standard_DS1_v2, etc.) is currently not available.
+Explanation
+
+During deployment, Terraform successfully created the Resource Group, Virtual Network, Subnet, Network Security Group, Public IP Address, and Network Interface. However, the virtual machine could not be created because Azure returned a SkuNotAvailable error. This indicates that the requested VM size was temporarily unavailable in the selected Azure region for the Azure for Students subscription. The same error occurred when attempting to create the VM directly using the Azure CLI, confirming that the issue was caused by Azure capacity restrictions rather than an error in the Terraform configuration.
+
+
+##### Error 2: Azure Policy Restriction
+Error Message
+RequestDisallowedByAzure
+Explanation
+
+Initially, the deployment was blocked because the Azure subscription only allowed deployment in specific regions. I updated the Azure Policy to include additional regions and changed the Terraform region variable accordingly. Although this resolved the policy restriction, VM creation continued to fail because of Azure capacity limitations.
+
+
+#####  What I learn from the lab:
+From this lab, I leaned, even the Infrastructure as Code can correctly define and provision cloud resources, but successful deployment also depends on Azure subscription policies, regional capacity, and service availability. I learned how to distinguish between Terraform configuration errors and Azure platform limitations by validating the deployment using both Terraform and the Azure CLI. Additionally, I gained experience resolving Git repository synchronization issues when working with remote repositories.
