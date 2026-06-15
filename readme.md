@@ -1,5 +1,8 @@
 #####  CST8918-Lab-A05 Terraform Web Server
 
+###### architecture diagram
+<img width="1139" height="713" alt="image" src="https://github.com/user-attachments/assets/07ab1693-ed9e-4b13-ab57-7ee19fd953a0" />
+
 
 ###### terraform validate success
 
