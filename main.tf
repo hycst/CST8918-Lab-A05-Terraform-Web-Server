@@ -34,7 +34,7 @@ variable "labelPrefix" {
 variable "region" {
   description = "Azure region for all resources."
   type        = string
-  default     = "canadacentral"
+  default     = "centralus"
 }
 
 variable "admin_username" {
