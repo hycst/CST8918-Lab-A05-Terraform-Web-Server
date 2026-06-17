@@ -20,6 +20,11 @@
 ###### Resource group
 <img width="1910" height="561" alt="image" src="https://github.com/user-attachments/assets/96220827-c720-4585-867a-a821b33a6d92" />
 
+##### 
+<img width="2361" height="1546" alt="image" src="https://github.com/user-attachments/assets/c1ea4682-b676-41c7-b40e-2e61116125e7" />
+
+#####
+<img width="1549" height="1291" alt="image" src="https://github.com/user-attachments/assets/c36c9ce9-d029-400f-ba45-04b2bfba67e6" />
 
 
 ##### Error 1: VM Creation Problem
