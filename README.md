@@ -1,7 +1,24 @@
 #####  CST8918-Lab-A05 Terraform Web Server
 
 ###### architecture diagram
+
+```markdown
+The deployment consists of:
+
+- Azure Resource Group
+- Virtual Network (10.0.0.0/16)
+- Subnet (10.0.1.0/24)
+- Network Security Group
+- Public IP Address
+- Network Interface
+- Ubuntu 22.04 Virtual Machine
+- Apache Web Server installed using Cloud-Init
+```
+
+
 <img width="1139" height="713" alt="image" src="https://github.com/user-attachments/assets/07ab1693-ed9e-4b13-ab57-7ee19fd953a0" />
+
+
 
 
 ###### terraform validate success
@@ -20,30 +37,15 @@
 ###### Resource group
 <img width="1910" height="561" alt="image" src="https://github.com/user-attachments/assets/96220827-c720-4585-867a-a821b33a6d92" />
 
-##### 
+<img width="1898" height="981" alt="image" src="https://github.com/user-attachments/assets/a8ef532d-15ab-4784-90b2-fde6a52a8db7" />
+
+##### Remote Server 
 <img width="2361" height="1546" alt="image" src="https://github.com/user-attachments/assets/c1ea4682-b676-41c7-b40e-2e61116125e7" />
 
-#####
+#####  SSH to connect remore server
 <img width="1549" height="1291" alt="image" src="https://github.com/user-attachments/assets/c36c9ce9-d029-400f-ba45-04b2bfba67e6" />
 
 
-##### Error 1: VM Creation Problem
-I met problem with create VM,  after investigation, I found it is due to the subcription. 
-Error Message
-SkuNotAvailable:
-The requested VM size (Standard_B1s, Standard_DS1_v2, etc.) is currently not available.
-Explanation
-
-During deployment, Terraform successfully created the Resource Group, Virtual Network, Subnet, Network Security Group, Public IP Address, and Network Interface. However, the virtual machine could not be created because Azure returned a SkuNotAvailable error. This indicates that the requested VM size was temporarily unavailable in the selected Azure region for the Azure for Students subscription. The same error occurred when attempting to create the VM directly using the Azure CLI, confirming that the issue was caused by Azure capacity restrictions rather than an error in the Terraform configuration.
-
-
-##### Error 2: Azure Policy Restriction
-Error Message
-RequestDisallowedByAzure
-Explanation
-
-Initially, the deployment was blocked because the Azure subscription only allowed deployment in specific regions. I updated the Azure Policy to include additional regions and changed the Terraform region variable accordingly. Although this resolved the policy restriction, VM creation continued to fail because of Azure capacity limitations.
-
 
 #####  What I learn from the lab:
-From this lab, I leaned, even the Infrastructure as Code can correctly define and provision cloud resources, but successful deployment also depends on Azure subscription policies, regional capacity, and service availability. I learned how to distinguish between Terraform configuration errors and Azure platform limitations by validating the deployment using both Terraform and the Azure CLI. Additionally, I gained experience resolving Git repository synchronization issues when working with remote repositories.
+From this lab, ## Lessons Learned using Terraform to provision Azure infrastructure. I learned how Terraform manages infrastructure as code, deploying Linux virtual machines, configuring networking resources, using Cloud-Init to install Apache automatically, and connecting to the VM using SSH.
