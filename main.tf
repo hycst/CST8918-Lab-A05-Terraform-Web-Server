@@ -1,4 +1,3 @@
-# Configure the Terraform runtime requirements.
 terraform {
   required_version = ">= 1.1.0"
 
@@ -15,33 +14,26 @@ terraform {
   }
 }
 
-# Azure Provider
 provider "azurerm" {
   features {}
 }
 
-# Cloud-init Provider
 provider "cloudinit" {
 }
 
 
-
 variable "labelPrefix" {
-  description = "College username. This will form the beginning of resource names."
-  type        = string
+  type = string
 }
 
 variable "region" {
-  description = "Azure region for all resources."
-  type        = string
-  default     = "centralus"
+  default = "westus2"
 }
 
 variable "admin_username" {
-  description = "Admin username for the Linux VM."
-  type        = string
-  default     = "azureadmin"
+  default = "azureadmin"
 }
+
 
 resource "azurerm_resource_group" "rg" {
   name     = "${var.labelPrefix}-A05-RG"
@@ -50,7 +42,7 @@ resource "azurerm_resource_group" "rg" {
 
 
 resource "azurerm_public_ip" "public_ip" {
-  name                = "${var.labelPrefix}-A05-public-ip"
+  name                = "${var.labelPrefix}-public-ip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -60,47 +52,55 @@ resource "azurerm_public_ip" "public_ip" {
 
 
 resource "azurerm_virtual_network" "vnet" {
-  name                = "${var.labelPrefix}-A05-vnet"
+  name                = "${var.labelPrefix}-vnet"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  address_space       = ["10.0.0.0/16"]
+
+  address_space = ["10.0.0.0/16"]
 }
+
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "${var.labelPrefix}-A05-subnet"
+  name                 = "${var.labelPrefix}-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.0.1.0/24"]
+
+  address_prefixes = ["10.0.1.0/24"]
 }
-
-
 
 
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.labelPrefix}-A05-nsg"
+
+  name                = "${var.labelPrefix}-nsg"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
-    name                       = "Allow-SSH"
+
+    name                       = "AllowSSH"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
+
     source_port_range          = "*"
     destination_port_range     = "22"
+
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
 
   security_rule {
-    name                       = "Allow-HTTP"
-    priority                   = 110
+
+    name                       = "AllowHTTP"
+    priority                   = 200
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
+
     source_port_range          = "*"
     destination_port_range     = "80"
+
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -109,46 +109,48 @@ resource "azurerm_network_security_group" "nsg" {
 
 
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.labelPrefix}-A05-nic"
+
+  name                = "${var.labelPrefix}-nic"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
   ip_configuration {
+
     name                          = "internal"
+
     subnet_id                     = azurerm_subnet.subnet.id
+
     private_ip_address_allocation = "Dynamic"
+
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
 }
 
 
 resource "azurerm_network_interface_security_group_association" "nic_nsg" {
+
   network_interface_id      = azurerm_network_interface.nic.id
+
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
 
-
-data "cloudinit_config" "config" {
+data "cloudinit_config" "web_server_config" {
   gzip          = false
-  base64_encode = false
+  base64_encode = true
 
   part {
-    filename     = "init.sh"
     content_type = "text/x-shellscript"
     content      = file("${path.module}/init.sh")
   }
 }
 
 
-
-
-
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "${var.labelPrefix}-A05-vm"
-  location            = azurerm_resource_group.rg.location
+  name                = "${var.labelPrefix}-vm"
   resource_group_name = azurerm_resource_group.rg.name
-  size                = "Standard_B1s"
+  location            = azurerm_resource_group.rg.location
+  size                = "Standard_B2ts_v2"
 
   admin_username = var.admin_username
 
@@ -156,11 +158,9 @@ resource "azurerm_linux_virtual_machine" "vm" {
     azurerm_network_interface.nic.id
   ]
 
-  disable_password_authentication = true
-
   admin_ssh_key {
     username   = var.admin_username
-    public_key = file(pathexpand("~/.ssh/id_rsa.pub"))
+    public_key = file("~/.ssh/id_rsa.pub")
   }
 
   os_disk {
@@ -171,12 +171,14 @@ resource "azurerm_linux_virtual_machine" "vm" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts"
+    sku       = "22_04-lts-gen2"
     version   = "latest"
   }
 
-  custom_data = base64encode(data.cloudinit_config.config.rendered)
+  custom_data = data.cloudinit_config.web_server_config.rendered
 }
+
+
 
 
 output "resource_group_name" {
