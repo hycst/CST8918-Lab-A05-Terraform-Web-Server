@@ -45,6 +45,8 @@ The deployment consists of:
 #####  SSH to connect remore server
 <img width="1549" height="1291" alt="image" src="https://github.com/user-attachments/assets/c36c9ce9-d029-400f-ba45-04b2bfba67e6" />
 
+##### Demo
+<img width="1910" height="994" alt="image" src="https://github.com/user-attachments/assets/599b93ba-bf9c-48af-a171-77cd5b6d4015" />
 
 
 #####  What I learn from the lab:
